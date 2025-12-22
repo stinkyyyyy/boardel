@@ -4,7 +4,7 @@
 
 ![alt text](image-1.png)
 
-This is a desktop app for Windows machines only\* that allows users to simultaneously prompt multiple LLM's at once in one environment. I use this app every day, for coding or non coding purposes. It has saved me countless hours of copypasting and is just so much more efficient.
+This is a desktop app for Windows machines only\* that allows users to simultaneously prompt multiple LLM's at once in one environment. I use this app every day, for coding or non coding purposes. It has saved me countless hours of copypasting and is just so much more efficient. You can paste text or screenshots directly into the bottom text area.
 
 \*Linux version is currently being tested. The app is packaged for Mac but I do not have a Mac to test it on. If any Mac developers want to help test, please do! File any issues you find in the Issues tab.
 
@@ -123,6 +123,7 @@ Finally, in the `src/main.ts` file, uncomment the following code to open the dev
 - 6/15: Added support for LMArena and also for adding custom prompts that can be saved.
 - 10/10: Removed support for Perplexity and LMArena (due to incompatibility) and added more contextual searching for JavaScript injection logic. Added Copilot support.
 - 11/22: Fixed bug with Grok injection, added unit testing for all files, new chat button support, multi-platform build workflows, and dark mode have been added.
+- 12/21: Added support for pasting images into the prompt area for all models.
 
 ## Star History
 
