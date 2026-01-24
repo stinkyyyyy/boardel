@@ -4,6 +4,9 @@ export default {
   testMatch: ["**/__tests__/**/*.[jt]s?(x)"],
   testPathIgnorePatterns: ["/node_modules/", "/dist/"],
   moduleFileExtensions: ["js", "ts", "tsx", "jsx"],
+  moduleNameMapper: {
+    "^(\\.{1,2}/.*)\\.js$": "$1",
+  },
   transform: {
     "^.+\\.tsx?$": [
       "ts-jest",
