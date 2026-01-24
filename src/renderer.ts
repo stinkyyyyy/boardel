@@ -1,21 +1,6 @@
-const ipcRenderer = window.electron.ipcRenderer;
+import { stripEmojis } from "./utils/text.js";
 
-// Add emoji stripping function (duplicate from utilities since renderer can't import from utilities)
-function stripEmojis(text: string): string {
-  return text
-    .replace(/[\u{1F600}-\u{1F64F}]/gu, "")
-    .replace(/[\u{1F300}-\u{1F5FF}]/gu, "")
-    .replace(/[\u{1F680}-\u{1F6FF}]/gu, "")
-    .replace(/[\u{1F1E0}-\u{1F1FF}]/gu, "")
-    .replace(/[\u{2600}-\u{26FF}]/gu, "")
-    .replace(/[\u{2700}-\u{27BF}]/gu, "")
-    .replace(/[\u{1F900}-\u{1F9FF}]/gu, "")
-    .replace(/[\u{1FA00}-\u{1FA6F}]/gu, "")
-    .replace(/[\u{1FA70}-\u{1FAFF}]/gu, "")
-    .replace(/[\u{FE00}-\u{FE0F}]/gu, "")
-    .replace(/[\u{200D}]/gu, "")
-    .trim();
-}
+const ipcRenderer = window.electron.ipcRenderer;
 
 export function logToWebPage(message: string): void {
   // Strip emojis before sending
@@ -161,6 +146,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   const promptArea = document.getElementById("prompt-area");
   if (savedTheme === "dark" && promptArea) {
     promptArea.classList.add("dark-mode");
+    document.body.classList.add("dark-mode"); // Also add to body
     if (themeToggleButton) {
       themeToggleButton.textContent = "☀️";
     }
@@ -322,6 +308,7 @@ if (themeToggleButton) {
     const promptArea = document.getElementById("prompt-area");
     if (promptArea) {
       promptArea.classList.toggle("dark-mode");
+      document.body.classList.toggle("dark-mode");
 
       if (promptArea.classList.contains("dark-mode")) {
         themeToggleButton.textContent = "☀️";

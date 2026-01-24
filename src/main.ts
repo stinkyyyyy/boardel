@@ -13,10 +13,11 @@ import {
   removeBrowserView,
   injectPromptIntoView,
   sendPromptInView,
-  stripEmojis, // Add this import
+  stripEmojis,
   openNewChatInView,
-  injectImageIntoView
-} from "./utilities.js"; // Adjusted path
+  injectImageIntoView,
+  CONTROLS_HEIGHT
+} from "./utilities.js";
 import { createRequire } from "node:module"; // Import createRequire
 import { fileURLToPath } from "node:url"; // Import fileURLToPath
 import Store from "electron-store"; // Import electron-store
@@ -74,8 +75,7 @@ const websites: string[] = getDefaultWebsites();
 function getViewHeight(windowHeight: number): number {
   // Calculate the height for browser views
   // This leaves space for the textarea and controls at the bottom
-  const controlsHeight = 235; // Height reserved for textarea and buttons (min 180px + padding 20px + buttons ~35px)
-  return windowHeight - controlsHeight;
+  return windowHeight - CONTROLS_HEIGHT;
 }
 
 function createWindow(): void {
@@ -83,8 +83,12 @@ function createWindow(): void {
     width: 2000,
     height: 1100,
     center: true,
-    backgroundColor: "#000000",
+    backgroundColor: "#00000000",
     show: false,
+    transparent: true,
+    vibrancy: "under-window",
+    visualEffectState: "active",
+    backgroundMaterial: "acrylic",
     icon: path.join(__dirname, "..", "favicon.ico"),
     webPreferences: {
       preload: path.join(__dirname, "..", "dist", "preload.cjs"),

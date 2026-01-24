@@ -8,280 +8,7 @@
     />
     <title>Multi-LLM Interface</title>
     <link rel="stylesheet" href="src/styles/tooltips.css" />
-    <style>
-      /* Critical CSS - Prevent white flash by defaulting to dark theme */
-      html {
-        background-color: #000000;
-      }
-      body {
-        background-color: #000000;
-        color: #e0e0e0;
-        margin: 0;
-        padding: 0;
-      }
-      #prompt-area {
-        background-color: #1e1e1e !important;
-        color: #e0e0e0 !important;
-      }
-      #prompt-input {
-        background-color: #2d2d2d !important;
-        color: #e0e0e0 !important;
-        border: 1px solid #444 !important;
-      }
-      #dropdown-button,
-      .prompt-select,
-      .model-select,
-      .diff-select,
-      .theme-toggle {
-        background-color: #2d2d2d !important;
-        color: #e0e0e0 !important;
-        border-color: #444 !important;
-      }
-      .dropdown-content {
-        background-color: #2d2d2d !important;
-        border-color: #0078d7 !important;
-      }
-      .dropdown-item {
-        background-color: #3a3a3a !important;
-        color: #e0e0e0 !important;
-      }
-      #no-chats-header {
-        color: #999 !important;
-      }
-    </style>
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      body {
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-end;
-        height: 100vh;
-        margin: 0;
-        position: relative; /* Add this to create positioning context */
-      }
-
-      /* Add styling for the centered header */
-      #no-chats-header {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        font-size: 24px;
-        color: #666;
-        text-align: center;
-        pointer-events: none; /* Makes it non-interactive */
-        z-index: 1; /* Ensures it's below the prompt area */
-      }
-
-      #prompt-area {
-        display: grid;
-        grid-template-columns: 1fr auto auto;
-        gap: 15px;
-        height: auto;
-        padding: 10px;
-        min-height: 180px;
-        max-height: 50%;
-        position: relative;
-        align-items: center;
-        z-index: 10; /* Ensure prompt area is above the header */
-        transition:
-          background-color 0.3s,
-          color 0.3s;
-      }
-
-      #prompt-area.dark-mode {
-        background-color: #1e1e1e;
-        color: #e0e0e0;
-      }
-
-      /* Light mode overrides - restore light theme when dark-mode is removed */
-      #prompt-area:not(.dark-mode) {
-        background-color: #f0f0f0 !important;
-        color: #333 !important;
-      }
-
-      #prompt-input {
-        padding: 10px;
-        font-size: 30px;
-        font-family: "Times New Roman", Times, serif;
-        line-height: 1.5;
-        width: 100%;
-        height: 100%;
-        transition:
-          background-color 0.3s,
-          color 0.3s,
-          border-color 0.3s;
-      }
-
-      #prompt-area.dark-mode #prompt-input {
-        background-color: #2d2d2d;
-        color: #e0e0e0;
-        border: 1px solid #444;
-      }
-
-      #prompt-area:not(.dark-mode) #prompt-input {
-        background-color: white !important;
-        color: #333 !important;
-        border: 1px solid #ccc !important;
-      }
-
-      .button-group {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        width: 180px;
-        gap: 10px;
-      }
-
-      .theme-toggle,
-      .new-chat-toggle {
-        width: 40px;
-        height: 40px;
-        font-size: 20px;
-        padding: 5px;
-        border-radius: 50%;
-        align-self: center;
-        margin-top: 5px;
-      }
-
-      .dropdown,
-      .prompt-picker,
-      .model-picker,
-      .diff {
-        width: 100%;
-        position: relative;
-      }
-
-      #dropdown-button,
-      .prompt-select,
-      .model-select,
-      .diff-select,
-      .theme-toggle,
-      .new-chat-toggle {
-        width: 100%;
-        height: 50px;
-        font-size: 18px;
-        padding: 10px;
-        border: 2px solid #ccc;
-        border-radius: 4px;
-        background-color: #f0f0f0;
-        cursor: pointer;
-        box-sizing: border-box;
-        display: block;
-        text-align: center;
-        font-weight: bold;
-        transition:
-          background-color 0.3s,
-          color 0.3s,
-          border-color 0.3s;
-      }
-
-      #prompt-area.dark-mode #dropdown-button,
-      #prompt-area.dark-mode .prompt-select,
-      #prompt-area.dark-mode .model-select,
-      #prompt-area.dark-mode .diff-select,
-      #prompt-area.dark-mode .theme-toggle,
-      #prompt-area.dark-mode .new-chat-toggle {
-        background-color: #2d2d2d;
-        color: #e0e0e0;
-        border-color: #444;
-      }
-
-      #prompt-area:not(.dark-mode) #dropdown-button,
-      #prompt-area:not(.dark-mode) .prompt-select,
-      #prompt-area:not(.dark-mode) .model-select,
-      #prompt-area:not(.dark-mode) .diff-select,
-      #prompt-area:not(.dark-mode) .theme-toggle,
-      #prompt-area:not(.dark-mode) .new-chat-toggle {
-        background-color: #f0f0f0 !important;
-        color: #333 !important;
-        border-color: #ccc !important;
-      }
-
-      .dropdown-content {
-        display: none;
-        position: absolute;
-        top: 100%;
-        left: 5%;
-        width: 90%;
-        background-color: #f9f9f9;
-        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-        border: 2px solid #0078d7;
-        border-radius: 8px;
-        padding: 4px;
-        max-height: 110px;
-        overflow-y: auto;
-        z-index: 1000;
-      }
-
-      .dropdown-item {
-        width: 100%;
-        padding: 8px;
-        text-decoration: none;
-        display: block;
-        cursor: pointer;
-        font-weight: bold;
-        background-color: #e6e6e6;
-        border: none;
-        text-align: left;
-        box-sizing: border-box;
-        margin: 0;
-        margin-bottom: 5px;
-        font-size: 16px;
-        transition: background-color 0.3s;
-      }
-
-      .dropdown-item:hover {
-        background-color: #ddd;
-      }
-
-      #prompt-area.dark-mode .dropdown-content {
-        background-color: #2d2d2d;
-        border-color: #0078d7;
-      }
-
-      #prompt-area.dark-mode .dropdown-item {
-        background-color: #3a3a3a;
-        color: #e0e0e0;
-      }
-
-      #prompt-area.dark-mode .dropdown-item:hover {
-        background-color: #4a4a4a;
-      }
-
-      #prompt-area:not(.dark-mode) .dropdown-content {
-        background-color: #f9f9f9 !important;
-        border-color: #0078d7 !important;
-      }
-
-      #prompt-area:not(.dark-mode) .dropdown-item {
-        background-color: #e6e6e6 !important;
-        color: #333 !important;
-      }
-
-      #prompt-area:not(.dark-mode) .dropdown-item:hover {
-        background-color: #ddd !important;
-      }
-
-      body:not(.dark-mode) #no-chats-header {
-        color: #666 !important;
-      }
-
-      .prompt-picker,
-      .model-picker {
-        margin: 0;
-      }
-
-      .show {
-        display: block;
-        position: absolute;
-      }
-    </style>
+    <link rel="stylesheet" href="src/styles/main.css" />
     <script type="module" src="./dist/renderer.js"></script>
   </head>
 
@@ -290,52 +17,38 @@
     <h2 id="no-chats-header">No Chats Shown. Please add a Chat</h2>
 
     <div id="prompt-area">
-      <div style="position: relative; width: 100%; height: 100%">
+      <div class="input-container">
         <textarea
           id="prompt-input"
-          rows="3"
-          placeholder="Press Ctrl + Enter to send prompt"
+          placeholder="Type your prompt here... (Ctrl + Enter to send)"
+          spellcheck="false"
         ></textarea>
-        <div
-          id="char-counter"
-          style="
-            position: absolute;
-            bottom: 5px;
-            right: 10px;
-            font-size: 12px;
-            opacity: 0.6;
-            pointer-events: none;
-          "
-        >
-          0 chars / 0 words
-        </div>
+        <div id="char-counter">0 chars / 0 words</div>
       </div>
-      <div
-        style="
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-          align-items: center;
-        "
-      >
+
+      <div class="controls-column">
         <div class="tooltip-container">
-          <button class="new-chat-toggle">➕</button>
+          <button class="new-chat-toggle icon-btn" aria-label="New Chat">
+            ➕
+          </button>
           <span class="tooltip" role="tooltip"
             >Open New Chat In Displayed Windows</span
           >
         </div>
         <div class="tooltip-container">
-          <button class="theme-toggle" aria-label="Toggle light/dark theme">
+          <button class="theme-toggle icon-btn" aria-label="Toggle light/dark theme">
             🌙
           </button>
           <span class="tooltip" role="tooltip">Toggle light/dark theme</span>
         </div>
       </div>
+
       <div class="button-group">
         <div class="dropdown">
           <div class="tooltip-container">
             <button
               id="dropdown-button"
+              class="glass-btn"
               aria-label="Show or hide AI model chats"
             >
               Show Models ▼
@@ -356,10 +69,10 @@
         <div class="prompt-picker">
           <div class="tooltip-container">
             <button
-              class="prompt-select"
+              class="prompt-select glass-btn"
               aria-label="Choose from saved prompts"
             >
-              Select Prompts
+              Saved Prompts
             </button>
             <span class="tooltip" role="tooltip"
               >Choose from saved prompts</span
@@ -369,10 +82,10 @@
         <div class="model-picker">
           <div class="tooltip-container">
             <button
-              class="model-select"
+              class="model-select glass-btn"
               aria-label="Configure default AI models"
             >
-              Default Models
+              Settings
             </button>
             <span class="tooltip" role="tooltip"
               >Configure default AI models</span
