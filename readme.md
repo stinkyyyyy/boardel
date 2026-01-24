@@ -23,10 +23,17 @@ Currently, the following LLM web interfaces are supported:
 
 ## Downloading the App for Personal Use
 
-Go to the Releases section, and download the Setup.exe (for Windows). It is going to say that Microsoft has flagged this as untrusted. Windows codesigning has not
-been done yet, so for now, ignore the warning and proceed to installation. I faithfully swear that this app has no malware and does not intend to hurt anybody. The code is open source, so please feel free to review it thoroughly at your discretion; I have nothing to hide.
+### Option 1: Installer (Recommended if available)
+Go to the Releases section, and download the `Setup.exe`. It is going to say that Microsoft has flagged this as untrusted. Windows codesigning has not been done yet, so for now, ignore the warning and proceed to installation.
 
-The app should open immediately after you bypass the warning and you can add the desktop shortcut to your computer!
+### Option 2: Portable Zip (Universal)
+If the installer is not available or if you prefer a portable version:
+1. Download the `.zip` file from the Releases section (e.g., `llm-god-win32-x64-x.x.x.zip`).
+2. Right-click the zip file and select **Extract All**.
+3. Open the extracted folder and double-click `llm-god.exe`.
+4. If you see a "Windows protected your PC" popup, click **More info** -> **Run anyway**.
+
+I faithfully swear that this app has no malware and does not intend to hurt anybody. The code is open source, so please feel free to review it thoroughly at your discretion; I have nothing to hide.
 
 ## How to Use the App
 
