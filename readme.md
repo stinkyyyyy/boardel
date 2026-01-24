@@ -2,11 +2,15 @@
 
 ## Screenshot
 
-![alt text](image-1.png)
+![New Glass UI Placeholder](image-1.png)
+*(Note: Screenshot to be updated to show the new Glass/Acrylic Hybrid UI)*
 
-This is a desktop app for Windows machines only\* that allows users to simultaneously prompt multiple LLM's at once in one environment. I use this app every day, for coding or non coding purposes. It has saved me countless hours of copypasting and is just so much more efficient. You can paste text or screenshots directly into the bottom text area.
+This is a desktop app for Windows machines (and now Linux/macOS) that allows users to simultaneously prompt multiple LLM's at once in one environment. I use this app every day, for coding or non coding purposes. It has saved me countless hours of copypasting and is just so much more efficient. You can paste text or screenshots directly into the bottom text area.
 
-\*Linux version is currently being tested. The app is packaged for Mac but I do not have a Mac to test it on. If any Mac developers want to help test, please do! File any issues you find in the Issues tab.
+**New in v0.2.0:**
+- **Glass/Acrylic Hybrid UI:** A stunning new modern interface featuring transparency, blur effects, and native OS integration (Windows Acrylic / macOS Vibrancy).
+- **Modular Architecture:** Completely refactored injection logic for better stability and faster updates.
+- **Dark/Light Mode:** Seamless switching with improved theming support.
 
 Currently, the following LLM web interfaces are supported:
 
@@ -19,10 +23,17 @@ Currently, the following LLM web interfaces are supported:
 
 ## Downloading the App for Personal Use
 
-Go to the Releases section, and download the Setup.exe. It is going to say that Microsoft has flagged this as untrusted. Windows codesigning has not
-been done yet, so for now, ignore the warning and proceed to installation. I faithfully swear that this app has no malware and does not intend to hurt anybody. The code is open source, so please feel free to review it thoroughly at your discretion; I have nothing to hide.
+### Option 1: Installer (Recommended if available)
+Go to the Releases section, and download the `Setup.exe`. It is going to say that Microsoft has flagged this as untrusted. Windows codesigning has not been done yet, so for now, ignore the warning and proceed to installation.
 
-The app should open immediately after you bypass the warning and you can add the desktop shortcut to your computer!
+### Option 2: Portable Zip (Universal)
+If the installer is not available or if you prefer a portable version:
+1. Download the `.zip` file from the Releases section (e.g., `llm-god-win32-x64-x.x.x.zip`).
+2. Right-click the zip file and select **Extract All**.
+3. Open the extracted folder and double-click `llm-god.exe`.
+4. If you see a "Windows protected your PC" popup, click **More info** -> **Run anyway**.
+
+I faithfully swear that this app has no malware and does not intend to hurt anybody. The code is open source, so please feel free to review it thoroughly at your discretion; I have nothing to hide.
 
 ## How to Use the App
 
@@ -85,7 +96,7 @@ npx electronmon dist/main.js
 npm run make
 ```
 
-This will create a launchable app in the `/out/app-win32-x64` path. You can then add this to your task bar for daily use outside of development!
+This will create a launchable app in the `/out` path. You can then add this to your task bar for daily use outside of development!
 
 Please check out the Issues tab for existing issues to tackle, and feel free to suggest new issues as well! Make a pull request to this repo once a feature or bug fix is done.
 
@@ -124,6 +135,7 @@ Finally, in the `src/main.ts` file, uncomment the following code to open the dev
 - 10/10: Removed support for Perplexity and LMArena (due to incompatibility) and added more contextual searching for JavaScript injection logic. Added Copilot support.
 - 11/22: Fixed bug with Grok injection, added unit testing for all files, new chat button support, multi-platform build workflows, and dark mode have been added.
 - 12/21: Added support for pasting images into the prompt area for all models.
+- **Current (Refactor)**: Major UI overhaul with Glass/Acrylic design, and complete backend refactor to modular provider system.
 
 ## Star History
 
