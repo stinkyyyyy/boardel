@@ -107,6 +107,7 @@ describe("Utilities Functions", () => {
         setZoomFactor: jest.fn(),
         loadURL: jest.fn(),
         executeJavaScript: jest.fn(),
+        setWindowOpenHandler: jest.fn(),
       };
 
       mockView = {
@@ -221,12 +222,12 @@ describe("Utilities Functions", () => {
       });
     });
 
-    test("sets zoom factor to 1.5", () => {
+    test("sets zoom factor to 1.0", () => {
       const url = "https://chatgpt.com";
 
       addBrowserView(mockMainWindow, url, websites, views);
 
-      expect(mockWebContents.setZoomFactor).toHaveBeenCalledWith(1.5);
+      expect(mockWebContents.setZoomFactor).toHaveBeenCalledWith(1.0);
     });
 
     test("loads URL in view", () => {
