@@ -83,8 +83,40 @@ export function addBrowserView(
     height: height - CONTROLS_HEIGHT,
   });
 
-  view.webContents.setZoomFactor(1.5);
+  view.webContents.setZoomFactor(1.0); // Reset to 1.0 (0.8 might be too small, let's start with standard)
   view.webContents.loadURL(url);
+
+  // Handle popups for login (e.g. "Continue with Google")
+  view.webContents.setWindowOpenHandler(({ url }) => {
+    // For Google/SSO logins, open in a new window that shares the session
+    if (
+      url.includes("accounts.google.com") ||
+      url.includes("appleid.apple.com") ||
+      url.includes("auth") ||
+      url.includes("login") ||
+      url.includes("sso") ||
+      url.includes("oauth")
+    ) {
+      return {
+        action: "allow",
+        overrideBrowserWindowOptions: {
+          autoHideMenuBar: true,
+          width: 600,
+          height: 700,
+          parent: mainWindow,
+          modal: true,
+          webPreferences: {
+            nodeIntegration: false,
+            contextIsolation: true,
+            // Important: Use the same session as the parent view implicitly
+            // by not specifying a partition.
+          },
+        },
+      };
+    }
+    // Deny other popups to keep the UI clean
+    return { action: "deny" };
+  });
 
   // Open DevTools for debugging
   // view.webContents.openDevTools({ mode: "detach" });
