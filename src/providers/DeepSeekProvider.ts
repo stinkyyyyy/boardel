@@ -40,25 +40,31 @@ export class DeepSeekProvider implements AIProvider {
             const textareaRect = textarea.getBoundingClientRect();
 
             const candidateButtons = buttons
+              .filter(b => {
+                const isDisabled = b.getAttribute('aria-disabled') === 'true';
+                if (isDisabled) return false;
+
+                const hasSVG = !!b.querySelector('svg');
+                if (!hasSVG) return false;
+
+                const hasDirectFileInput = b.querySelector('input[type="file"]') !== null;
+                if (hasDirectFileInput) return false;
+
+                return true;
+              })
               .map(b => {
                 const btnRect = b.getBoundingClientRect();
-                const isDisabled = b.getAttribute('aria-disabled') === 'true';
-                const hasSVG = !!b.querySelector('svg');
                 const distance = Math.abs(btnRect.top - textareaRect.top) + Math.abs(btnRect.left - textareaRect.left);
                 const isNearby = distance < 700;
-                const hasDirectFileInput = b.querySelector('input[type="file"]') !== null;
 
                 return {
                   button: b,
                   rect: btnRect,
-                  isDisabled,
-                  hasSVG,
-                  distance,
                   isNearby,
-                  hasDirectFileInput
+                  distance
                 };
               })
-              .filter(info => info.hasSVG && !info.isDisabled && info.isNearby && !info.hasDirectFileInput);
+              .filter(info => info.isNearby);
 
             if (candidateButtons.length > 0) {
               btn = candidateButtons.reduce((rightmost, current) => {
