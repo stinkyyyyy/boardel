@@ -52,10 +52,13 @@ export class ClaudeProvider implements AIProvider {
     view.webContents.executeJavaScript(`
       (function() {
         const selectors = [
-          'a[aria-label="New chat"]',
-          'button[aria-label="New chat"]',
-          'a[href*="new"]',
-          'div[role="button"]:has-text("New")'
+          'a[aria-label*="new chat" i]',
+          'button[aria-label*="new chat" i]',
+          'div[role="button"][aria-label*="new chat" i]',
+          'a[aria-label*="new" i]',
+          'button[aria-label*="new" i]',
+          'div[role="button"][aria-label*="new" i]',
+          'a[href*="new" i]'
         ];
 
         for (const selector of selectors) {
@@ -71,16 +74,17 @@ export class ClaudeProvider implements AIProvider {
           }
         }
 
-        // Fallback
-        const clickables = Array.from(document.querySelectorAll('a, button, div[role="button"]'));
-        const newChatBtn = clickables.find(el => {
-          if (el.offsetParent === null) return false;
+        // Fallback: iterate over all potential clickables but exit early
+        // We use querySelectorAll and a for-of loop to avoid creating a large array with Array.from
+        const elements = document.querySelectorAll('a, button, div[role="button"]');
+        for (const el of elements) {
+          if (el.offsetParent === null) continue;
           const label = (el.getAttribute('aria-label') || '').toLowerCase();
           const text = (el.textContent || '').toLowerCase();
-          return label.includes('new') || text.trim().includes('new chat');
-        });
-        if (newChatBtn) {
-          newChatBtn.click();
+          if (label.includes('new') || text.trim().includes('new chat')) {
+            el.click();
+            return true;
+          }
         }
       })();
     `);
