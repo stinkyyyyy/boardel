@@ -1,147 +1,106 @@
-# LLM-God (Your Quick AI Browser)
+# LLM-God: The Ultimate AI Browser
 
-## Screenshot
+<p align="center">
+  <img src="image-1.png" alt="LLM-God Interface" width="800" />
+</p>
 
-![New Glass UI Placeholder](image-1.png)
-_(Note: Screenshot to be updated to show the new Glass/Acrylic Hybrid UI)_
+**LLM-God** is a powerful desktop application that revolutionizes how you interact with AI. Built with Electron and TypeScript, it allows you to simultaneously prompt multiple Large Language Models (LLMs) in a single, unified interface. Whether you're coding, researching, or just exploring, save hours of copy-pasting and boost your productivity.
 
-This is a desktop app for Windows machines (and now Linux/macOS) that allows users to simultaneously prompt multiple LLM's at once in one environment. I use this app every day, for coding or non coding purposes. It has saved me countless hours of copypasting and is just so much more efficient. You can paste text or screenshots directly into the bottom text area.
+## ✨ Key Features
 
-**New in v0.2.0:**
+-   **Multi-Model Prompting:** Send one prompt to ChatGPT, Gemini, Claude, Grok, DeepSeek, and Copilot simultaneously.
+-   **🔄 Loop Mode (New!):** Create a continuous conversation loop between two AI models. Watch them debate, collaborate, or refine ideas automatically!
+-   **Modern Glass UI:** A stunning interface featuring transparency, blur effects, and native OS integration (Windows Acrylic / macOS Vibrancy).
+-   **Dark/Light Mode:** Seamless theme switching to match your workflow.
+-   **Modular Architecture:** Robust and stable injection logic for reliable performance.
+-   **Image Support:** Paste images directly into the prompt area for supported models.
 
-- **Glass/Acrylic Hybrid UI:** A stunning new modern interface featuring transparency, blur effects, and native OS integration (Windows Acrylic / macOS Vibrancy).
-- **Modular Architecture:** Completely refactored injection logic for better stability and faster updates.
-- **Dark/Light Mode:** Seamless switching with improved theming support.
+## 🚀 Supported Models
 
-Currently, the following LLM web interfaces are supported:
+-   ChatGPT
+-   Google Gemini
+-   Anthropic Claude
+-   X.ai Grok
+-   DeepSeek
+-   Microsoft Copilot
 
-- ChatGPT
-- Google Gemini
-- Anthropic Claude
-- X.ai Grok
-- DeepSeek
-- Copilot
+---
 
-## Downloading the App for Personal Use
+## 📥 Installation
 
-### Option 1: Installer (Recommended if available)
+### Windows
 
-Go to the Releases section, and download the `Setup.exe`. It is going to say that Microsoft has flagged this as untrusted. Windows codesigning has not been done yet, so for now, ignore the warning and proceed to installation.
+1.  **Download:** Go to the [Releases](../../releases) section and download the latest `Setup.exe` or portable `.zip` file.
+2.  **Install/Run:**
+    -   **Installer:** Run `Setup.exe`. (Ignore Windows warning by clicking "More info" -> "Run anyway").
+    -   **Portable:** Extract the `.zip` file and run `llm-god.exe`.
 
-### Option 2: Portable Zip (Universal)
+### Linux
 
-If the installer is not available or if you prefer a portable version:
+1.  **Download:** Get the latest `.zip` or `.AppImage` from the [Releases](../../releases) section.
+2.  **Run:** Extract and execute the binary.
 
-1. Download the `.zip` file from the Releases section (e.g., `llm-god-win32-x64-x.x.x.zip`).
-2. Right-click the zip file and select **Extract All**.
-3. Open the extracted folder and double-click `llm-god.exe`.
-4. If you see a "Windows protected your PC" popup, click **More info** -> **Run anyway**.
+---
 
-I faithfully swear that this app has no malware and does not intend to hurt anybody. The code is open source, so please feel free to review it thoroughly at your discretion; I have nothing to hide.
+## 📖 How to Use
 
-## How to Use the App
+### Basic Prompting
+1.  **Select Models:** Use the "Show Models" dropdown to toggle which AI interfaces are visible.
+2.  **Type & Send:** Enter your prompt in the bottom text area.
+3.  **Launch:** Press `Ctrl + Enter` to send the prompt to all active models.
 
-### Selecting the Model
+### 🔄 Using Loop Mode
+*Exclusive feature for power users!*
 
-Use the dropdown at the bottom right corner to add and remove LLM web consoles. By default, ChatGPT, Gemini, and Llama are there by default and cannot be changed.
+1.  **Open Two Models:** Ensure exactly **two** AI models are visible (e.g., ChatGPT and Claude).
+2.  **Start Loop:** A "Start Loop" button will appear in the control bar. Click it.
+3.  **Initiate:** Type a starting prompt in the main text box and hit `Ctrl + Enter`.
+4.  **Watch the Magic:** The models will start talking to each other! The output of one becomes the input of the other.
+5.  **Stop:** Click "Stop Loop" at any time to end the conversation.
 
-\*Note that if you are on free tier, then you will face the typical usage limits as specified by the LLM provider.
+### Customization
+-   **Theme:** Click the moon/sun icon to toggle Dark Mode.
+-   **Settings:** Configure default models in the Settings menu.
 
-To launch the prompt to all the LLM's, press `Ctrl + Enter` on your keyboard
+---
 
-If you want to close the app, press `Ctrl + W` on your keyboard.
+## 🛠️ Development
 
-**Important Note:** If you experience issues with the "New Chat" button, make sure your AI chat interface is set to English language. The button may not work properly in other languages.
+Want to contribute? Here's how to build it yourself:
 
-**Important Note:** You must be logged into the respective LLM web interfaces in the browserviews for the app to work properly. In the future, functionality to support usage without logging in may be added, although it is not currently a high priority.
+1.  **Clone the Repo:**
+    ```bash
+    git clone https://github.com/czhou578/llm-god.git
+    cd llm-god
+    ```
 
-## Disclaimer
+2.  **Install Dependencies:**
+    ```bash
+    npm install
+    ```
 
-I did find out about the [GodMode](https://github.com/smol-ai/GodMode) project, but I felt that people needed an app that just provided the models from the few big companies like OpenAI and Anthropic. Many of the other smaller models are not very useful. In addition, that project doesn't seem to be very well maintained anymore and doesn't have some of the new models like Grok.
+3.  **Run in Dev Mode:**
+    Open two terminals:
+    -   Terminal 1: `npx tsc --watch`
+    -   Terminal 2: `npm start`
 
-## Contributing
+4.  **Build:**
+    ```bash
+    npm run make
+    ```
+    Build artifacts will be in the `/out` directory.
 
-New contributions are welcome!
+---
 
-1. Clone the project and navigate to root directory
+## ⚠️ Disclaimer
 
-```
-git clone https://github.com/czhou578/llm-god.git
-cd llm-god
-```
+This app is a browser wrapper that automates interactions with AI web interfaces.
+-   **Login Required:** You must be logged into your respective AI accounts within the app.
+-   **Usage Limits:** Free tier users are subject to the standard rate limits of each provider.
+-   **Safety:** The app is open source and local-first. Your data stays on your machine.
 
-2. Install all dependencies
+---
 
-```
-npm install
-```
-
-3. Start the app, which will create the shortcut that will also appear on your computer
-
-```
-npm run start
-```
-
-When developing, instead of running the command above, I like to have two terminals open. One terminal should run the command:
-
-```
-npx tsc --watch
-```
-
-and the other terminal should run the command:
-
-```
-npx electronmon dist/main.js
-```
-
-4. To check if the build works properly, run the following command in the root folder
-
-```
-npm run make
-```
-
-This will create a launchable app in the `/out` path. You can then add this to your task bar for daily use outside of development!
-
-Please check out the Issues tab for existing issues to tackle, and feel free to suggest new issues as well! Make a pull request to this repo once a feature or bug fix is done.
-
-When submitting pull requests, please make sure to list the changes made using bullet points. A screenshot showing that the app functionality works as intended would be good too, and lead to faster reviews.
-
-## Debugging Tools
-
-While developing, I liked to have the devtools of the app be visible and also have the option to have hot reloading on every save.
-For hot reloading, we are using the `electron-reload` package. On windows, you will need to have the `cross-env` package installed as a dev dependency to set the NODE_ENV variable properly.
-
-```
-npm install --save-dev cross-env
-```
-
-Then, in the `package.json` file, set the start script to the following:
-
-```json
-"start": "cross-env NODE_ENV=development electron .",
-```
-
-Finally, in the `src/main.ts` file, uncomment the following code to open the devtools and enable hot reloading:
-
-```
- mainWindow.webContents.openDevTools({ mode: "detach" });
-```
-
-## Relevant links:
-
-- Quick App Demo: https://www.youtube.com/watch?v=YxqWUp0Wmi0
-- Code Walkthrough Video: https://www.youtube.com/watch?v=bkSRSUMsh10
-
-## Updates
-
-- 5/17: Migrated to using TypeScript across the app.
-- 6/15: Added support for LMArena and also for adding custom prompts that can be saved.
-- 10/10: Removed support for Perplexity and LMArena (due to incompatibility) and added more contextual searching for JavaScript injection logic. Added Copilot support.
-- 11/22: Fixed bug with Grok injection, added unit testing for all files, new chat button support, multi-platform build workflows, and dark mode have been added.
-- 12/21: Added support for pasting images into the prompt area for all models.
-- **Current (Refactor)**: Major UI overhaul with Glass/Acrylic design, and complete backend refactor to modular provider system.
-- **Current (New Feature)**: Added "Loop Mode" for inter-model communication, allowing two models to talk to each other in a continuous loop.
-
-## Star History
+## ⭐ Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=czhou578/llm-god&type=date&legend=top-left)](https://www.star-history.com/#czhou578/llm-god&type=date&legend=top-left)
