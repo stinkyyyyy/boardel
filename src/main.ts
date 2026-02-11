@@ -16,7 +16,7 @@ import {
   stripEmojis,
   openNewChatInView,
   injectImageIntoView,
-  CONTROLS_HEIGHT
+  CONTROLS_HEIGHT,
 } from "./utilities.js";
 import { createRequire } from "node:module"; // Import createRequire
 import { fileURLToPath } from "node:url"; // Import fileURLToPath
@@ -742,7 +742,7 @@ ipcMain.on("save-default-models", (_, models: string[]) => {
       },
     }) as CustomBrowserView;
 
-    view.setBackgroundColor('#000000');
+    view.setBackgroundColor("#000000");
     view.id = `${url}`;
     mainWindow.contentView.addChildView(view);
     view.setBounds({

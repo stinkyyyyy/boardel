@@ -69,31 +69,7 @@ export class GrokProvider implements AIProvider {
 
   handleNewChat(view: CustomBrowserView): void {
     view.webContents.executeJavaScript(`
-      (function() {
-        // For Grok, clicking the "Home" link creates a new chat
-        const allLinks = document.querySelectorAll('a');
-
-        for (const link of allLinks) {
-          const label = (link.getAttribute('aria-label') || '').toLowerCase();
-          const href = link.href || '';
-
-          // Check for home page link (Polish: "Strona główna", English: "Home")
-          if ((label.includes('strona główna') || label.includes('home')) &&
-              href.includes('grok.com/') &&
-              !href.includes('sign-in') &&
-              !href.includes('sign-up')) {
-
-            if (link.offsetParent !== null) {
-              link.click();
-              return true;
-            }
-          }
-        }
-
-        // Fallback: just navigate to grok.com homepage
         window.location.href = 'https://grok.com/';
-        return true;
-      })();
     `);
   }
 
