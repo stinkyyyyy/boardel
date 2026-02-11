@@ -69,38 +69,31 @@ export class GeminiProvider implements AIProvider {
     view.webContents.executeJavaScript(`
       (function() {
         // Try to find button with aria-label="Nowy czat" or text="Nowy czat"
-        const allButtons = document.querySelectorAll('button');
+        let btn = document.querySelector('button[aria-label*="new chat" i], button[aria-label*="nowy czat" i]');
 
-        let foundButtons = [];
-        for (const btn of allButtons) {
-          const label = (btn.getAttribute('aria-label') || '').toLowerCase();
-          const text = (btn.textContent || '').toLowerCase().trim();
-
-          // Check for "new chat" in various languages
-          if (label.includes('nowy czat') || text.includes('nowy czat') ||
-              label.includes('new chat') || text.includes('new chat')) {
-
-            foundButtons.push({
-              visible: btn.offsetParent !== null,
-              disabled: btn.disabled,
-              element: btn
-            });
+        // Fallback: iterate buttons to find text match if no attribute match
+        if (!btn) {
+          const allButtons = document.querySelectorAll('button');
+          for (const b of allButtons) {
+            const text = (b.textContent || '').toLowerCase().trim();
+            if (text.includes('new chat') || text.includes('nowy czat')) {
+              btn = b;
+              break;
+            }
           }
         }
 
-        // Try to click ANY button (visible or not, enabled or disabled)
-        if (foundButtons.length > 0) {
-          const info = foundButtons[0]; // Take the first one
-
+        // Try to click the button (visible or not, enabled or disabled)
+        if (btn) {
           // Force enable the button if it's disabled
-          if (info.element.disabled) {
-            info.element.disabled = false;
-            info.element.removeAttribute('disabled');
-            info.element.removeAttribute('aria-disabled');
+          if (btn.disabled) {
+            btn.disabled = false;
+            btn.removeAttribute('disabled');
+            btn.removeAttribute('aria-disabled');
           }
 
           // Click the button
-          info.element.click();
+          btn.click();
 
           // If normal click doesn't work, try dispatching event
           const clickEvent = new MouseEvent('click', {
@@ -108,7 +101,7 @@ export class GeminiProvider implements AIProvider {
             cancelable: true,
             view: window
           });
-          info.element.dispatchEvent(clickEvent);
+          btn.dispatchEvent(clickEvent);
 
           return true;
         }
