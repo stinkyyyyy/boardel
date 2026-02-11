@@ -47,7 +47,7 @@ describe("Dropdown Functions", () => {
       "Show Copilot",
     ];
     dropdownItems = itemTexts.map((text) => {
-      const item = document.createElement("div");
+      const item = document.createElement("button");
       item.className = "dropdown-item";
       item.textContent = text;
       dropdownContent.appendChild(item);

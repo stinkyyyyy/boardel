@@ -322,9 +322,15 @@ body.dark-mode #no-chats-header {
   text-align: left;
 }
 
-.dropdown-item:hover {
+.dropdown-item:hover,
+.dropdown-item:focus-visible {
   background-color: rgba(0, 0, 0, 0.05);
   color: var(--accent);
+  outline: none;
+}
+
+.dropdown-item:focus-visible {
+  box-shadow: inset 2px 0 0 0 var(--accent);
 }
 
 #prompt-area.dark-mode .dropdown-content {
@@ -336,7 +342,8 @@ body.dark-mode #no-chats-header {
   color: var(--text-dark);
 }
 
-#prompt-area.dark-mode .dropdown-item:hover {
+#prompt-area.dark-mode .dropdown-item:hover,
+#prompt-area.dark-mode .dropdown-item:focus-visible {
   background-color: rgba(255, 255, 255, 0.1);
 }
 
