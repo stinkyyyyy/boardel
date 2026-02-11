@@ -199,3 +199,19 @@ export function injectImageIntoView(
     console.warn(`No provider found for view: ${view.id}`);
   }
 }
+
+export async function getLastResponseInView(view: CustomBrowserView): Promise<string | null> {
+  const provider = getProvider(view);
+  if (provider) {
+    return provider.getLastResponse(view);
+  }
+  return null;
+}
+
+export async function isGenerationCompleteInView(view: CustomBrowserView): Promise<boolean> {
+  const provider = getProvider(view);
+  if (provider) {
+    return provider.isGenerationComplete(view);
+  }
+  return false;
+}

@@ -153,4 +153,68 @@ export class DeepSeekProvider implements AIProvider {
     `,
     );
   }
+
+  async getLastResponse(view: CustomBrowserView): Promise<string | null> {
+    return view.webContents.executeJavaScript(`
+      (function() {
+        const responses = document.querySelectorAll('.ds-markdown');
+        if (responses.length > 0) {
+            return responses[responses.length - 1].innerText;
+        }
+        return null;
+      })();
+    `);
+  }
+
+  async isGenerationComplete(view: CustomBrowserView): Promise<boolean> {
+     return view.webContents.executeJavaScript(`
+      (function() {
+        const textarea = document.querySelector('textarea');
+        if (textarea) {
+          let container = textarea.parentElement;
+          while (container && !container.querySelector('div.ds-icon-button[role="button"]')) {
+            container = container.parentElement;
+            if (container === document.body) break;
+          }
+
+          if (container) {
+            const buttons = Array.from(container.querySelectorAll('div.ds-icon-button[role="button"]'));
+            const textareaRect = textarea.getBoundingClientRect();
+
+            const candidateButtons = buttons
+              .filter(b => {
+                const isDisabled = b.getAttribute('aria-disabled') === 'true';
+                if (isDisabled) return false;
+
+                const hasSVG = !!b.querySelector('svg');
+                if (!hasSVG) return false;
+
+                const hasDirectFileInput = b.querySelector('input[type="file"]') !== null;
+                if (hasDirectFileInput) return false;
+
+                return true;
+              })
+              .map(b => {
+                const btnRect = b.getBoundingClientRect();
+                const distance = Math.abs(btnRect.top - textareaRect.top) + Math.abs(btnRect.left - textareaRect.left);
+                const isNearby = distance < 700;
+
+                return {
+                  button: b,
+                  rect: btnRect,
+                  isNearby,
+                  distance
+                };
+              })
+              .filter(info => info.isNearby);
+
+             if (candidateButtons.length > 0) {
+                 return true;
+             }
+          }
+        }
+        return false;
+      })();
+    `);
+  }
 }

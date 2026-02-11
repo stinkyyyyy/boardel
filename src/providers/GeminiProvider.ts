@@ -228,4 +228,37 @@ export class GeminiProvider implements AIProvider {
     `,
     );
   }
+
+  async getLastResponse(view: CustomBrowserView): Promise<string | null> {
+    return view.webContents.executeJavaScript(`
+      (function() {
+        const responses = document.querySelectorAll('model-response');
+        if (responses.length > 0) {
+          const lastResponse = responses[responses.length - 1];
+          return lastResponse.innerText;
+        }
+        return null;
+      })();
+    `);
+  }
+
+  async isGenerationComplete(view: CustomBrowserView): Promise<boolean> {
+    return view.webContents.executeJavaScript(`
+      (function() {
+        const sendSelectors = [
+            "button[aria-label*='Send message']",
+            "button[aria-label*='Send']",
+            "button[mattooltip*='Send']",
+            "button.send-button"
+        ];
+        for (const selector of sendSelectors) {
+            const btn = document.querySelector(selector);
+            if (btn && !btn.disabled && btn.getAttribute("aria-disabled") !== "true") {
+                return true;
+            }
+        }
+        return false;
+      })();
+    `);
+  }
 }

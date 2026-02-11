@@ -40,4 +40,14 @@ export interface AIProvider {
    * Injects an image into the chat
    */
   injectImage(view: CustomBrowserView, imageData: string): Promise<void> | void;
+
+  /**
+   * Gets the last response from the provider
+   */
+  getLastResponse(view: CustomBrowserView): Promise<string | null>;
+
+  /**
+   * Checks if the provider has finished generating a response
+   */
+  isGenerationComplete(view: CustomBrowserView): Promise<boolean>;
 }

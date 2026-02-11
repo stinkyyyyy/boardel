@@ -140,6 +140,7 @@ Finally, in the `src/main.ts` file, uncomment the following code to open the dev
 - 11/22: Fixed bug with Grok injection, added unit testing for all files, new chat button support, multi-platform build workflows, and dark mode have been added.
 - 12/21: Added support for pasting images into the prompt area for all models.
 - **Current (Refactor)**: Major UI overhaul with Glass/Acrylic design, and complete backend refactor to modular provider system.
+- **Current (New Feature)**: Added "Loop Mode" for inter-model communication, allowing two models to talk to each other in a continuous loop.
 
 ## Star History
 
