@@ -1,4 +1,4 @@
-import { stripEmojis } from "./utils/text.js";
+import { stripEmojis, countWords } from "./utils/text.js";
 
 const ipcRenderer = window.electron.ipcRenderer;
 
@@ -230,8 +230,7 @@ function updateCharCounter(text: string): void {
   const charCounterElement = document.getElementById("char-counter");
   if (charCounterElement) {
     const charCount = text.length;
-    const wordCount =
-      text.trim().length === 0 ? 0 : text.trim().split(/\s+/).length;
+    const wordCount = countWords(text);
     charCounterElement.textContent = `${charCount} chars / ${wordCount} words`;
   }
 }

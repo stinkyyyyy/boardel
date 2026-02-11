@@ -29,3 +29,43 @@ export function escapeForJS(str: string): string {
     .replace(/\r/g, "\\r")
     .replace(/\t/g, "\\t");
 }
+
+/**
+ * Optimized word counting function that avoids splitting strings
+ */
+export function countWords(text: string): number {
+  if (!text) return 0;
+  let count = 0;
+  let inWord = false;
+  const len = text.length;
+
+  for (let i = 0; i < len; i++) {
+    const code = text.charCodeAt(i);
+    // Check for whitespace characters based on MDN \s definition:
+    // [ \f\n\r\t\v\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]
+    const isSpace =
+      code === 32 || // space
+      code === 9 || // tab
+      code === 10 || // LF
+      code === 13 || // CR
+      code === 12 || // FF
+      code === 11 || // VT
+      code === 160 || // NBSP
+      code === 5760 || // Ogham space mark
+      (code >= 8192 && code <= 8202) || // En quad .. hair space
+      code === 8232 || // Line separator
+      code === 8233 || // Paragraph separator
+      code === 8239 || // Narrow NBSP
+      code === 8287 || // Medium mathematical space
+      code === 12288 || // Ideographic space
+      code === 65279; // BOM
+
+    if (isSpace) {
+      inWord = false;
+    } else if (!inWord) {
+      inWord = true;
+      count++;
+    }
+  }
+  return count;
+}
