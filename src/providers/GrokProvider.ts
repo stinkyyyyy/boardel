@@ -147,4 +147,57 @@ export class GrokProvider implements AIProvider {
     `,
     );
   }
+
+  async getLastResponse(view: CustomBrowserView): Promise<string | null> {
+    return view.webContents.executeJavaScript(`
+      (function() {
+        // Strategy: Find all copy buttons, as they are usually attached to responses
+        const copyButtons = Array.from(document.querySelectorAll('button[aria-label="Copy"]'));
+        if (copyButtons.length > 0) {
+            const lastCopyBtn = copyButtons[copyButtons.length - 1];
+            // The response text is usually in a sibling or parent container
+            // Let's try to find a container with substantial text near it
+            const container = lastCopyBtn.closest('div[class*="message"]') || lastCopyBtn.parentElement?.parentElement;
+            if (container) {
+                return container.innerText;
+            }
+        }
+
+        // Fallback: look for generic message containers if known
+        const messages = document.querySelectorAll('.prose, .markdown');
+        if (messages.length > 0) {
+            return messages[messages.length - 1].innerText;
+        }
+
+        return null;
+      })();
+    `);
+  }
+
+  async isGenerationComplete(view: CustomBrowserView): Promise<boolean> {
+    return view.webContents.executeJavaScript(`
+      (function() {
+        const textarea = document.querySelector('textarea');
+        var btn = document.querySelector('button[aria-label*="Submit"]');
+        if (!btn) btn = document.querySelector('button[aria-label*="Send"]');
+        if (!btn) btn = document.querySelector('button[data-testid="send-button"]');
+
+        if (!btn && textarea) {
+          const form = textarea.closest('form');
+          if (form) {
+            const buttons = form.querySelectorAll('button');
+            btn = Array.from(buttons).find(b => {
+              const svg = b.querySelector('svg');
+              return svg && !b.disabled;
+            });
+          }
+        }
+
+        if (btn && !btn.disabled) {
+          return true;
+        }
+        return false;
+      })();
+    `);
+  }
 }

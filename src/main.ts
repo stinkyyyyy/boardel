@@ -17,6 +17,8 @@ import {
   openNewChatInView,
   injectImageIntoView,
   CONTROLS_HEIGHT,
+  getLastResponseInView,
+  isGenerationCompleteInView,
 } from "./utilities.js";
 import { createRequire } from "node:module"; // Import createRequire
 import { fileURLToPath } from "node:url"; // Import fileURLToPath
@@ -28,6 +30,14 @@ const store = new Store(); // Create an instance of electron-store
 interface CustomBrowserView extends WebContentsView {
   id: string; // Make id optional as it's assigned after creation
 }
+
+// Loop State
+const loopState = {
+  isActive: false,
+  currentIndex: 0,
+  lastResponses: {} as Record<string, string>,
+  timeoutId: null as NodeJS.Timeout | null,
+};
 
 // if (require("electron-squirrel-startup")) app.quit();
 
@@ -164,6 +174,69 @@ function createWindow(): void {
 
   // This logic has been moved up and placed inside the 'ready-to-show' event.
 }
+
+// Loop Logic
+async function runLoopStep() {
+  if (!loopState.isActive || views.length !== 2) {
+    loopState.isActive = false;
+    // Notify renderer to reset button state
+    mainWindow.webContents.send("loop-stopped");
+    return;
+  }
+
+  const currentView = views[loopState.currentIndex];
+  const nextIndex = (loopState.currentIndex + 1) % views.length;
+  const nextView = views[nextIndex];
+
+  // Poll for completion
+  const isComplete = await isGenerationCompleteInView(currentView);
+
+  if (isComplete) {
+    const response = await getLastResponseInView(currentView);
+    if (response && response.trim().length > 0) {
+      const lastResponse = loopState.lastResponses[currentView.id];
+      if (response !== lastResponse) {
+        console.log(
+          `Loop: Got new response from View ${loopState.currentIndex}. Sending to View ${nextIndex}.`,
+        );
+        loopState.lastResponses[currentView.id] = response;
+
+        // Send to next view
+        injectPromptIntoView(nextView, response);
+        // Give it a moment to inject
+        setTimeout(async () => {
+          await sendPromptInView(nextView);
+          // Move to next step
+          loopState.currentIndex = nextIndex;
+          // Wait for this new view to finish.
+          // We assume "sendPromptInView" triggers generation, so isGenerationComplete will become false shortly.
+          setTimeout(runLoopStep, 3000);
+        }, 1000);
+        return;
+      }
+    }
+  }
+
+  // If not complete or no new response, poll again
+  if (loopState.isActive) {
+    loopState.timeoutId = setTimeout(runLoopStep, 2000);
+  }
+}
+
+ipcMain.on("start-loop", () => {
+  if (views.length !== 2) return;
+  console.log("Starting loop...");
+  loopState.isActive = true;
+  loopState.currentIndex = 0; // Start monitoring the first view
+  loopState.lastResponses = {}; // Reset history
+  runLoopStep();
+});
+
+ipcMain.on("stop-loop", () => {
+  console.log("Stopping loop...");
+  loopState.isActive = false;
+  if (loopState.timeoutId) clearTimeout(loopState.timeoutId);
+});
 
 async function createFormWindow() {
   // Get current theme from main window first

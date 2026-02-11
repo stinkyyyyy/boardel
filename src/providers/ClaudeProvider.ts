@@ -179,4 +179,47 @@ export class ClaudeProvider implements AIProvider {
     `,
     );
   }
+
+  async getLastResponse(view: CustomBrowserView): Promise<string | null> {
+    return view.webContents.executeJavaScript(`
+      (function() {
+        const messages = document.querySelectorAll('div[data-message-author-role="assistant"]');
+        if (messages.length > 0) {
+            return messages[messages.length - 1].innerText;
+        }
+        // Fallback for Claude's specific structure
+        const allMessages = document.querySelectorAll('.font-claude-message');
+        if (allMessages.length > 0) {
+            return allMessages[allMessages.length - 1].innerText;
+        }
+        return null;
+      })();
+    `);
+  }
+
+  async isGenerationComplete(view: CustomBrowserView): Promise<boolean> {
+    return view.webContents.executeJavaScript(`
+      (function() {
+        var btn = document.querySelector("button[aria-label*='Send message']");
+        if (!btn) btn = document.querySelector("button[aria-label*='Send Message']");
+        if (!btn) {
+           const inputArea = document.querySelector('[contenteditable="true"]');
+           if (inputArea) {
+               const container = inputArea.closest('div[class*="composer"]') || inputArea.closest('form') || inputArea.parentElement;
+               if (container) {
+                   const buttons = container.querySelectorAll('button');
+                   btn = Array.from(buttons).find(b => {
+                       const svg = b.querySelector('svg');
+                       return svg && !b.disabled;
+                   });
+               }
+           }
+        }
+        if (btn && !btn.disabled) {
+            return true;
+        }
+        return false;
+      })();
+    `);
+  }
 }

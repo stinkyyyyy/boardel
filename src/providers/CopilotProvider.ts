@@ -165,4 +165,45 @@ export class CopilotProvider implements AIProvider {
     `,
     );
   }
+
+  async getLastResponse(view: CustomBrowserView): Promise<string | null> {
+    return view.webContents.executeJavaScript(`
+      (function() {
+        const responses = document.querySelectorAll('.message-content, .ac-container');
+        if (responses.length > 0) {
+            return responses[responses.length - 1].innerText;
+        }
+        // Fallback: look for generic assistant message attributes
+        const assistantMsgs = document.querySelectorAll('[data-content="assistant-message"]');
+        if (assistantMsgs.length > 0) {
+             return assistantMsgs[assistantMsgs.length - 1].innerText;
+        }
+        return null;
+      })();
+    `);
+  }
+
+  async isGenerationComplete(view: CustomBrowserView): Promise<boolean> {
+    return view.webContents.executeJavaScript(`
+      (function() {
+        const stopBtn = document.querySelector('button[aria-label*="Stop"]');
+        if (stopBtn) return false;
+
+        const textarea = document.querySelector('textarea');
+        // If textarea is editable/enabled, we are likely done.
+        if (textarea && !textarea.disabled) return true;
+
+        // Also check for send button
+        const allButtons = document.querySelectorAll('button');
+        var btn = Array.from(allButtons).find(b => {
+          const label = b.getAttribute('aria-label');
+          return label && (label.toLowerCase().includes('submit') || label.toLowerCase().includes('send'));
+        });
+
+        if (btn && !btn.disabled) return true;
+
+        return false;
+      })();
+    `);
+  }
 }
