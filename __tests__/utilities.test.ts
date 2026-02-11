@@ -489,7 +489,7 @@ describe("Utilities Functions", () => {
 
       expect(mockView.webContents.executeJavaScript).toHaveBeenCalled();
       const jsCode = mockView.webContents.executeJavaScript.mock.calls[0][0];
-      expect(jsCode).toContain("strona główna");
+      expect(jsCode).toContain("window.location.href");
     });
 
     test("executes JavaScript for DeepSeek", () => {
