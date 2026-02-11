@@ -94,14 +94,12 @@ export class CopilotProvider implements AIProvider {
         }
 
         // Fallback
-        const buttons = Array.from(document.querySelectorAll('button'));
-        const newChatBtn = buttons.find(btn => {
-          if (btn.disabled || btn.offsetParent === null) return false;
-          const label = (btn.getAttribute('aria-label') || '').toLowerCase();
-          return label.includes('new') || label.includes('start');
-        });
-        if (newChatBtn) {
-          newChatBtn.click();
+        const newChatButtons = document.querySelectorAll('button[aria-label*="new" i], button[aria-label*="start" i]');
+        for (const btn of newChatButtons) {
+          if (!btn.disabled && btn.offsetParent !== null) {
+            btn.click();
+            break;
+          }
         }
       })();
     `);
