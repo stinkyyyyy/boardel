@@ -57,13 +57,13 @@ export class ChatGPTProvider implements AIProvider {
           try {
             const elements = document.querySelectorAll(selector);
             for (const element of elements) {
-              // Check if visible and interactable
-              if (element.offsetParent !== null &&
-                  element.getBoundingClientRect().width > 0) {
-                const text = element.textContent?.toLowerCase() || '';
-                const label = element.getAttribute('aria-label')?.toLowerCase() || '';
+              const text = element.textContent?.toLowerCase() || '';
+              const label = element.getAttribute('aria-label')?.toLowerCase() || '';
 
-                if (label.includes('new') || text.includes('new chat')) {
+              if (label.includes('new') || text.includes('new chat')) {
+                // Check if visible and interactable
+                if (element.offsetParent !== null &&
+                    element.getBoundingClientRect().width > 0) {
                   element.click();
                   return true;
                 }
