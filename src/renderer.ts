@@ -94,10 +94,44 @@ const newChatToggleButton = document.querySelector(
   ".new-chat-toggle",
 ) as HTMLButtonElement | null;
 
+const loopToggleContainer = document.getElementById(
+  "loop-mode-container",
+) as HTMLDivElement | null;
+const loopToggleButton = document.getElementById(
+  "loop-toggle",
+) as HTMLButtonElement | null;
+
+async function updateLoopButtonVisibility() {
+  const ipc = window.electron.ipcRenderer;
+  // Give main process some time to update views
+  setTimeout(async () => {
+    const openViews = await ipc.invoke("get-open-views");
+    if (loopToggleContainer) {
+      if (openViews && openViews.length === 2) {
+        loopToggleContainer.style.display = "block";
+      } else {
+        loopToggleContainer.style.display = "none";
+        if (loopToggleButton && loopToggleButton.textContent === "Stop Loop") {
+          loopToggleButton.textContent = "Start Loop";
+          ipc.send("stop-loop");
+        }
+      }
+    }
+  }, 500);
+}
+
 // Check if views are currently open and set initial button text
 window.addEventListener("DOMContentLoaded", async () => {
   const ipc = window.electron.ipcRenderer;
   const openViews = await ipc.invoke("get-open-views");
+
+  if (loopToggleContainer) {
+    if (openViews && openViews.length === 2) {
+      loopToggleContainer.style.display = "block";
+    } else {
+      loopToggleContainer.style.display = "none";
+    }
+  }
 
   if (openChatGPTButton) {
     const isChatGPTOpen =
@@ -162,6 +196,7 @@ if (openChatGPTButton) {
       closeChatGPTMessage("close chatgpt now");
       openChatGPTButton.textContent = "Show ChatGPT";
     }
+    updateLoopButtonVisibility();
   });
 }
 
@@ -174,6 +209,7 @@ if (openGeminiButton) {
       closeGeminiMessage("close gemini now");
       openGeminiButton.textContent = "Show Gemini";
     }
+    updateLoopButtonVisibility();
   });
 }
 
@@ -186,6 +222,7 @@ if (openClaudeButton) {
       closeClaudeMessage("close claude now");
       openClaudeButton.textContent = "Show Claude";
     }
+    updateLoopButtonVisibility();
   });
 }
 
@@ -198,6 +235,7 @@ if (openGrokButton) {
       closeGrokMessage("close grok now");
       openGrokButton.textContent = "Show Grok";
     }
+    updateLoopButtonVisibility();
   });
 }
 
@@ -210,6 +248,7 @@ if (openDeepSeekButton) {
       closeDeepSeekMessage("close deepseek now");
       openDeepSeekButton.textContent = "Show DeepSeek";
     }
+    updateLoopButtonVisibility();
   });
 }
 
@@ -222,6 +261,7 @@ if (openCopilotButton) {
       closeCopilotMessage("close copilot now");
       openCopilotButton.textContent = "Show Copilot";
     }
+    updateLoopButtonVisibility();
   });
 }
 
@@ -353,5 +393,24 @@ ipcRenderer.on("inject-prompt", (_: any, selectedPrompt: string) => {
     document.addEventListener("DOMContentLoaded", injectPrompt);
   } else {
     injectPrompt();
+  }
+});
+
+if (loopToggleButton) {
+  loopToggleButton.addEventListener("click", () => {
+    const text = (loopToggleButton.textContent || "").trim();
+    if (text === "Start Loop") {
+      loopToggleButton.textContent = "Stop Loop";
+      ipcRenderer.send("start-loop");
+    } else {
+      loopToggleButton.textContent = "Start Loop";
+      ipcRenderer.send("stop-loop");
+    }
+  });
+}
+
+ipcRenderer.on("loop-stopped", () => {
+  if (loopToggleButton) {
+    loopToggleButton.textContent = "Start Loop";
   }
 });

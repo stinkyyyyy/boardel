@@ -192,4 +192,40 @@ export class ChatGPTProvider implements AIProvider {
     `,
     );
   }
+
+  async getLastResponse(view: CustomBrowserView): Promise<string | null> {
+    return view.webContents.executeJavaScript(`
+      (function() {
+        const responses = document.querySelectorAll('div[data-message-author-role="assistant"]');
+        if (responses.length > 0) {
+          const lastResponse = responses[responses.length - 1];
+          return lastResponse.innerText;
+        }
+        return null;
+      })();
+    `);
+  }
+
+  async isGenerationComplete(view: CustomBrowserView): Promise<boolean> {
+    return view.webContents.executeJavaScript(`
+      (function() {
+        var btn = document.querySelector('button[data-testid="send-button"]');
+        if (!btn) btn = document.querySelector('button[aria-label*="Send"]');
+        if (!btn) btn = document.querySelector('button[data-testid="fruitjuice-send-button"]');
+        if (!btn) {
+             const buttons = Array.from(document.querySelectorAll('button'));
+             btn = buttons.find(b => {
+                 const svg = b.querySelector('svg');
+                 return svg && b.closest('form') && !b.disabled;
+             });
+        }
+        if (btn && !btn.disabled) {
+            return true;
+        }
+        // Fallback: check if stop button exists
+        const stopButton = document.querySelector('button[aria-label="Stop generating"]');
+        return !stopButton;
+      })();
+    `);
+  }
 }
