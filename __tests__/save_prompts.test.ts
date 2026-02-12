@@ -68,11 +68,9 @@ describe("Save Prompt Functions", () => {
     };
 
     // Setup window.electron mock
-    Object.defineProperty(global, "window", {
+    Object.defineProperty(window, "electron", {
       value: {
-        electron: {
-          ipcRenderer: mockIpcRenderer,
-        },
+        ipcRenderer: mockIpcRenderer,
       },
       writable: true,
       configurable: true,
@@ -489,6 +487,9 @@ describe("Save Prompt Functions", () => {
         key1: "Prompt to delete",
       });
 
+      // Mock confirm dialog
+      window.confirm = jest.fn(() => true);
+
       jest.isolateModules(() => {
         require("../src/save_prompt");
       });
@@ -496,7 +497,7 @@ describe("Save Prompt Functions", () => {
       await new Promise((resolve) => setTimeout(resolve, 100));
     });
 
-    test("sends delete-prompt-by-value message", () => {
+    test("sends delete-prompt-by-value message when confirmed", () => {
       const deleteButton = promptTable.querySelector(
         ".delete-button",
       ) as HTMLButtonElement;
@@ -509,7 +510,32 @@ describe("Save Prompt Functions", () => {
 
       promptTable.dispatchEvent(clickEvent);
 
+      expect(window.confirm).toHaveBeenCalledWith(
+        "Are you sure you want to delete this prompt?",
+      );
       expect(mockIpcRenderer.send).toHaveBeenCalledWith(
+        "delete-prompt-by-value",
+        expect.any(String),
+      );
+    });
+
+    test("does not send delete message when cancelled", () => {
+      (window.confirm as jest.Mock).mockReturnValue(false);
+
+      const deleteButton = promptTable.querySelector(
+        ".delete-button",
+      ) as HTMLButtonElement;
+
+      const clickEvent = new MouseEvent("click", { bubbles: true });
+      Object.defineProperty(clickEvent, "target", {
+        value: deleteButton,
+        writable: false,
+      });
+
+      promptTable.dispatchEvent(clickEvent);
+
+      expect(window.confirm).toHaveBeenCalled();
+      expect(mockIpcRenderer.send).not.toHaveBeenCalledWith(
         "delete-prompt-by-value",
         expect.any(String),
       );

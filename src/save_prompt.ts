@@ -67,26 +67,28 @@ promptTable.addEventListener("click", async (event) => {
   }
 
   if (target.classList.contains("delete-button")) {
-    const row = target.closest("tr") as HTMLTableRowElement;
-    let promptText = row.querySelector("td")?.textContent?.trim();
+    if (confirm("Are you sure you want to delete this prompt?")) {
+      const row = target.closest("tr") as HTMLTableRowElement;
+      let promptText = row.querySelector("td")?.textContent?.trim();
 
-    if (promptText) {
-      // Normalize the string to remove variation selectors and ensure consistency
-      promptText = promptText.normalize("NFKC");
+      if (promptText) {
+        // Normalize the string to remove variation selectors and ensure consistency
+        promptText = promptText.normalize("NFKC");
 
-      // Remove emojis and other non-printable characters
-      promptText = promptText.replace(
-        /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F1E6}-\u{1F1FF}\u200D\uFE0F]/gu,
-        "",
-      );
+        // Remove emojis and other non-printable characters
+        promptText = promptText.replace(
+          /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F1E6}-\u{1F1FF}\u200D\uFE0F]/gu,
+          "",
+        );
 
-      // Remove any remaining non-printable characters
-      promptText = promptText.replace(/[^\P{C}\n\t\r ]+/gu, "");
+        // Remove any remaining non-printable characters
+        promptText = promptText.replace(/[^\P{C}\n\t\r ]+/gu, "");
 
-      console.log(`Deleting prompt: ${promptText}`);
-      ipcRenderer1.send("delete-prompt-by-value", promptText); // Send the value to the main process
+        console.log(`Deleting prompt: ${promptText}`);
+        ipcRenderer1.send("delete-prompt-by-value", promptText); // Send the value to the main process
 
-      row.remove();
+        row.remove();
+      }
     }
   }
 });
@@ -115,11 +117,13 @@ function buildPromptTable(prompts: Record<string, string>) {
     deleteButton.textContent = "🗑️";
     deleteButton.className = "delete-button";
     deleteButton.title = "Delete";
+    deleteButton.setAttribute("aria-label", "Delete prompt");
 
     const editButton = document.createElement("button");
     editButton.textContent = "✏️";
     editButton.className = "edit-button";
     editButton.title = "Edit";
+    editButton.setAttribute("aria-label", "Edit prompt");
 
     row_action_div.appendChild(deleteButton);
     row_action_div.appendChild(editButton);
