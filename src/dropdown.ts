@@ -5,7 +5,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const dropdownContent = document.querySelector(
     ".dropdown-content",
   ) as HTMLElement | null;
-  const dropdownItems = document.querySelectorAll<HTMLElement>(".dropdown-item");
+  const dropdownItems =
+    document.querySelectorAll<HTMLElement>(".dropdown-item");
 
   if (dropdownButton && dropdownContent) {
     const toggleDropdown = (show?: boolean) => {

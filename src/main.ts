@@ -343,6 +343,7 @@ app.whenReady().then(() => {
   electronLocalShortcut.register(mainWindow, "Ctrl+W", () => {
     app.quit();
   });
+  electronLocalShortcut.register(mainWindow, "Ctrl+N", handleNewChat);
 });
 
 app.on("window-all-closed", () => {
@@ -614,7 +615,7 @@ ipcMain.on("close-gemini", (_, prompt: string) => {
   }
 });
 
-ipcMain.on("new-chat", () => {
+function handleNewChat() {
   console.log("New chat requested");
   views.forEach((view) => {
     try {
@@ -623,7 +624,9 @@ ipcMain.on("new-chat", () => {
       console.error("Error resetting prompt in view:", error);
     }
   });
-});
+}
+
+ipcMain.on("new-chat", handleNewChat);
 
 ipcMain.on("open-edit-view", async (_, prompt: string) => {
   console.log("Opening edit view for prompt:", prompt);
