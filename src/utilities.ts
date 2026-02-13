@@ -200,7 +200,9 @@ export function injectImageIntoView(
   }
 }
 
-export async function getLastResponseInView(view: CustomBrowserView): Promise<string | null> {
+export async function getLastResponseInView(
+  view: CustomBrowserView,
+): Promise<string | null> {
   const provider = getProvider(view);
   if (provider) {
     return provider.getLastResponse(view);
@@ -208,7 +210,9 @@ export async function getLastResponseInView(view: CustomBrowserView): Promise<st
   return null;
 }
 
-export async function isGenerationCompleteInView(view: CustomBrowserView): Promise<boolean> {
+export async function isGenerationCompleteInView(
+  view: CustomBrowserView,
+): Promise<boolean> {
   const provider = getProvider(view);
   if (provider) {
     return provider.isGenerationComplete(view);
