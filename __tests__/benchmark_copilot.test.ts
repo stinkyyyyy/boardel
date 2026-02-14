@@ -1,8 +1,7 @@
-
-describe('CopilotProvider handleNewChat Benchmark', () => {
+describe("CopilotProvider handleNewChat Benchmark", () => {
   beforeAll(() => {
     // Mock offsetParent for JSDOM as it returns null by default
-    Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
+    Object.defineProperty(HTMLElement.prototype, "offsetParent", {
       get() {
         return this.parentNode;
       },
@@ -10,19 +9,19 @@ describe('CopilotProvider handleNewChat Benchmark', () => {
   });
 
   beforeEach(() => {
-    document.body.innerHTML = '';
+    document.body.innerHTML = "";
   });
 
   const setupDOM = (numButtons: number, targetIndex: number) => {
-    const container = document.createElement('div');
+    const container = document.createElement("div");
     // Batch append for faster setup
     const fragment = document.createDocumentFragment();
     for (let i = 0; i < numButtons; i++) {
-      const btn = document.createElement('button');
+      const btn = document.createElement("button");
       if (i === targetIndex) {
-        btn.setAttribute('aria-label', 'Start new chat');
+        btn.setAttribute("aria-label", "Start new chat");
       } else {
-        btn.setAttribute('aria-label', 'Some other action');
+        btn.setAttribute("aria-label", "Some other action");
       }
       fragment.appendChild(btn);
     }
@@ -32,33 +31,34 @@ describe('CopilotProvider handleNewChat Benchmark', () => {
 
   const currentImplementation = () => {
     // Fallback logic from CopilotProvider.ts
-    const buttons = Array.from(document.querySelectorAll('button'));
-    const newChatBtn = buttons.find(btn => {
+    const buttons = Array.from(document.querySelectorAll("button"));
+    const newChatBtn = buttons.find((btn) => {
       // In the real code: if (btn.disabled || btn.offsetParent === null) return false;
       // We cast to any because TS might complain about offsetParent on Element if not typed as HTMLElement,
       // but querySelectorAll returns NodeList<Element>. Array.from gives Element[].
       const el = btn as HTMLButtonElement;
       if (el.disabled || el.offsetParent === null) return false;
-      const label = (el.getAttribute('aria-label') || '').toLowerCase();
-      return label.includes('new') || label.includes('start');
+      const label = (el.getAttribute("aria-label") || "").toLowerCase();
+      return label.includes("new") || label.includes("start");
     });
     return newChatBtn;
   };
 
   const optimizedImplementation = () => {
     // Proposed optimization
-    const selector = 'button[aria-label*="new" i], button[aria-label*="start" i]';
+    const selector =
+      'button[aria-label*="new" i], button[aria-label*="start" i]';
     const buttons = document.querySelectorAll(selector);
 
     for (const btn of buttons) {
-         const el = btn as HTMLButtonElement;
-         if (el.disabled || el.offsetParent === null) continue;
-         return el;
+      const el = btn as HTMLButtonElement;
+      if (el.disabled || el.offsetParent === null) continue;
+      return el;
     }
     return undefined;
   };
 
-  test('Performance comparison', () => {
+  test("Performance comparison", () => {
     const numButtons = 10000;
     const targetIndex = 9999; // Place it at the end
     setupDOM(numButtons, targetIndex);
@@ -73,12 +73,18 @@ describe('CopilotProvider handleNewChat Benchmark', () => {
     const endOptimized = performance.now();
     const timeOptimized = endOptimized - startOptimized;
 
-    console.log(`Current Implementation (10k buttons): ${timeCurrent.toFixed(3)}ms`);
-    console.log(`Optimized Implementation (10k buttons): ${timeOptimized.toFixed(3)}ms`);
+    console.log(
+      `Current Implementation (10k buttons): ${timeCurrent.toFixed(3)}ms`,
+    );
+    console.log(
+      `Optimized Implementation (10k buttons): ${timeOptimized.toFixed(3)}ms`,
+    );
 
     expect(resultCurrent).toBeDefined();
     expect(resultOptimized).toBeDefined();
-    expect((resultCurrent as Element).getAttribute('aria-label')).toBe('Start new chat');
+    expect((resultCurrent as Element).getAttribute("aria-label")).toBe(
+      "Start new chat",
+    );
     expect(resultCurrent).toBe(resultOptimized);
 
     // Expect significant improvement

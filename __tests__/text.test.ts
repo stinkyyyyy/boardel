@@ -53,7 +53,8 @@ describe("Text Utilities", () => {
       ];
 
       for (const text of cases) {
-        const expected = text.trim().length === 0 ? 0 : text.trim().split(/\s+/).length;
+        const expected =
+          text.trim().length === 0 ? 0 : text.trim().split(/\s+/).length;
         expect(countWords(text)).toBe(expected);
       }
     });
