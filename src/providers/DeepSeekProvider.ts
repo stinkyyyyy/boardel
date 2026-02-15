@@ -167,7 +167,7 @@ export class DeepSeekProvider implements AIProvider {
   }
 
   async isGenerationComplete(view: CustomBrowserView): Promise<boolean> {
-     return view.webContents.executeJavaScript(`
+    return view.webContents.executeJavaScript(`
       (function() {
         const textarea = document.querySelector('textarea');
         if (textarea) {

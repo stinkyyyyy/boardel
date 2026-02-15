@@ -479,7 +479,7 @@ describe("Utilities Functions", () => {
 
       expect(mockView.webContents.executeJavaScript).toHaveBeenCalled();
       const jsCode = mockView.webContents.executeJavaScript.mock.calls[0][0];
-      expect(jsCode).toContain("New chat");
+      expect(jsCode).toContain("new chat");
     });
 
     test("executes JavaScript for Grok", () => {
