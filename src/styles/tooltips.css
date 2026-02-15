@@ -43,7 +43,9 @@
 }
 
 .tooltip-container:hover .tooltip,
-.tooltip-container button:hover + .tooltip {
+.tooltip-container:focus-within .tooltip,
+.tooltip-container button:hover + .tooltip,
+.tooltip-container button:focus + .tooltip {
   visibility: visible !important;
   opacity: 1 !important;
 }

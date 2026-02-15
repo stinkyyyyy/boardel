@@ -1,16 +1,16 @@
 /**
  * @jest-environment jsdom
  */
-import { ChatGPTProvider } from '../src/providers/ChatGPTProvider';
+import { ChatGPTProvider } from "../src/providers/ChatGPTProvider";
 
 // Mock electron module to avoid load issues
-jest.mock('electron', () => ({
+jest.mock("electron", () => ({
   WebContentsView: class {},
   app: {},
   BrowserWindow: class {},
 }));
 
-describe('ChatGPTProvider Verification', () => {
+describe("ChatGPTProvider Verification", () => {
   let provider: ChatGPTProvider;
   let layoutAccessCount = 0;
   let container: HTMLElement;
@@ -18,8 +18,8 @@ describe('ChatGPTProvider Verification', () => {
   beforeEach(() => {
     provider = new ChatGPTProvider();
     layoutAccessCount = 0;
-    document.body.innerHTML = '';
-    container = document.createElement('div');
+    document.body.innerHTML = "";
+    container = document.createElement("div");
     document.body.appendChild(container);
     jest.clearAllMocks();
   });
@@ -30,54 +30,54 @@ describe('ChatGPTProvider Verification', () => {
   });
 
   const mockLayout = (element: Element) => {
-    Object.defineProperty(element, 'offsetParent', {
+    Object.defineProperty(element, "offsetParent", {
       get: jest.fn(() => {
         layoutAccessCount++;
         return document.body;
       }),
-      configurable: true
+      configurable: true,
     });
 
-    Object.defineProperty(element, 'getBoundingClientRect', {
+    Object.defineProperty(element, "getBoundingClientRect", {
       value: jest.fn(() => {
         layoutAccessCount++;
         return { width: 100, height: 20, top: 0, left: 0 };
       }),
-      configurable: true
+      configurable: true,
     });
   };
 
   const setupDOM = (numLinks = 100) => {
     // Create many distractors (links that match the 3rd selector but not the text)
     for (let i = 0; i < numLinks; i++) {
-      const link = document.createElement('a');
-      link.href = '/chat/' + i;
-      link.textContent = 'Some random chat history';
+      const link = document.createElement("a");
+      link.href = "/chat/" + i;
+      link.textContent = "Some random chat history";
       mockLayout(link);
       container.appendChild(link);
     }
 
     // Create the target button (also matching 3rd selector)
-    const targetLink = document.createElement('a');
-    targetLink.href = '/new-chat';
-    targetLink.textContent = 'New chat';
+    const targetLink = document.createElement("a");
+    targetLink.href = "/new-chat";
+    targetLink.textContent = "New chat";
     mockLayout(targetLink);
     container.appendChild(targetLink);
 
     return targetLink;
   };
 
-  test('handleNewChat code should prioritize text checks over layout checks', () => {
+  test("handleNewChat code should prioritize text checks over layout checks", () => {
     const target = setupDOM(100);
-    const clickSpy = jest.spyOn(target, 'click');
-    let injectedScript = '';
+    const clickSpy = jest.spyOn(target, "click");
+    let injectedScript = "";
 
     const mockView = {
       webContents: {
         executeJavaScript: jest.fn((script: string) => {
           injectedScript = script;
-        })
-      }
+        }),
+      },
     };
 
     // Call the method to capture the script
@@ -104,6 +104,6 @@ describe('ChatGPTProvider Verification', () => {
     // Optimized version: ~2 accesses.
     // Unoptimized version: ~202 accesses.
     expect(layoutAccessCount).toBeLessThan(10);
-    console.log('Layout accesses:', layoutAccessCount);
+    console.log("Layout accesses:", layoutAccessCount);
   });
 });
