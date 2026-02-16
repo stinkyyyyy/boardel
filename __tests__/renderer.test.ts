@@ -69,6 +69,7 @@ describe("Renderer Functions", () => {
   let newChatToggle: HTMLButtonElement;
   let promptDropdown: HTMLButtonElement;
   let modelSelect: HTMLButtonElement;
+  let clearButton: HTMLButtonElement;
 
   beforeEach(() => {
     // Clear all mocks
@@ -79,6 +80,11 @@ describe("Renderer Functions", () => {
     textArea = document.createElement("textarea");
     textArea.id = "prompt-input";
     document.body.appendChild(textArea);
+
+    clearButton = document.createElement("button");
+    clearButton.id = "clear-input";
+    clearButton.style.display = "none";
+    document.body.appendChild(clearButton);
 
     charCounter = document.createElement("div");
     charCounter.id = "char-counter";
@@ -378,6 +384,78 @@ describe("Renderer Functions", () => {
     test("model select button opens model selection window", () => {
       modelSelect.click();
       // Should call ipcRenderer.send("open-model-selection-window")
+    });
+  });
+
+  describe("Clear Button", () => {
+    const runInIsolation = (testFn: (elements: any) => void) => {
+      jest.isolateModules(() => {
+        document.body.innerHTML = `
+          <textarea id="prompt-input"></textarea>
+          <button id="clear-input" style="display: none;"></button>
+          <div id="char-counter"></div>
+          <button id="showClaude"></button>
+          <button id="showChatGPT"></button>
+          <button id="showGemini"></button>
+          <button id="showGrok"></button>
+          <button id="showDeepSeek"></button>
+          <button id="showCopilot"></button>
+          <button class="theme-toggle"></button>
+          <button class="new-chat-toggle"></button>
+          <button class="prompt-select"></button>
+          <button class="model-select"></button>
+          <div id="loop-mode-container"></div>
+          <button id="loop-toggle"></button>
+        `;
+
+        require("../src/renderer");
+
+        const elements = {
+          textArea: document.getElementById(
+            "prompt-input",
+          ) as HTMLTextAreaElement,
+          clearButton: document.getElementById(
+            "clear-input",
+          ) as HTMLButtonElement,
+        };
+
+        testFn(elements);
+      });
+    };
+
+    test("shows button when text is typed", () => {
+      runInIsolation(({ textArea, clearButton }) => {
+        const inputEvent = new Event("input", { bubbles: true });
+        textArea.value = "Hello";
+        textArea.dispatchEvent(inputEvent);
+        expect(clearButton.style.display).toBe("flex");
+      });
+    });
+
+    test("hides button when text is cleared manually", () => {
+      runInIsolation(({ textArea, clearButton }) => {
+        const inputEvent = new Event("input", { bubbles: true });
+        textArea.value = "Hello";
+        textArea.dispatchEvent(inputEvent);
+        expect(clearButton.style.display).toBe("flex");
+
+        textArea.value = "";
+        textArea.dispatchEvent(inputEvent);
+        expect(clearButton.style.display).toBe("none");
+      });
+    });
+
+    test("clears text and hides button when clicked", () => {
+      runInIsolation(({ textArea, clearButton }) => {
+        textArea.value = "Some text";
+        const inputEvent = new Event("input", { bubbles: true });
+        textArea.dispatchEvent(inputEvent);
+
+        clearButton.click();
+
+        expect(textArea.value).toBe("");
+        expect(clearButton.style.display).toBe("none");
+      });
     });
   });
 });

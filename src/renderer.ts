@@ -61,6 +61,9 @@ export function closeGeminiMessage(message: string): void {
 const textArea = document.getElementById(
   "prompt-input",
 ) as HTMLTextAreaElement | null;
+const clearButton = document.getElementById(
+  "clear-input",
+) as HTMLButtonElement | null;
 const openClaudeButton = document.getElementById(
   "showClaude",
 ) as HTMLButtonElement | null;
@@ -275,11 +278,23 @@ function updateCharCounter(text: string): void {
   }
 }
 
+// Function to update clear button visibility
+function updateClearButtonVisibility(text: string): void {
+  if (clearButton) {
+    if (text.length > 0) {
+      clearButton.style.display = "flex";
+    } else {
+      clearButton.style.display = "none";
+    }
+  }
+}
+
 if (textArea) {
   textArea.addEventListener("input", (event: Event) => {
     const value = (event.target as HTMLTextAreaElement).value;
     logToWebPage(value);
     updateCharCounter(value);
+    updateClearButtonVisibility(value);
   });
 
   textArea.addEventListener("keydown", (event: KeyboardEvent) => {
@@ -292,6 +307,7 @@ if (textArea) {
           ipcRenderer.send("send-prompt", promptText);
           textArea.value = "";
           updateCharCounter("");
+          updateClearButtonVisibility("");
         }
       }
     }
@@ -315,6 +331,16 @@ if (textArea) {
         }
       }
     }
+  });
+}
+
+if (clearButton && textArea) {
+  clearButton.addEventListener("click", () => {
+    textArea.value = "";
+    textArea.focus();
+    // Dispatch input event to trigger updates
+    const inputEvent = new Event("input", { bubbles: true });
+    textArea.dispatchEvent(inputEvent);
   });
 }
 
@@ -381,6 +407,7 @@ ipcRenderer.on("inject-prompt", (_: any, selectedPrompt: string) => {
       promptInput.dispatchEvent(inputEvent);
 
       updateCharCounter(cleanPrompt);
+      updateClearButtonVisibility(cleanPrompt);
 
       console.log("Prompt injected successfully");
     } else {
