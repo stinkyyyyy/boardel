@@ -371,3 +371,37 @@ body.dark-mode #no-chats-header {
   width: 100%;
   position: relative;
 }
+
+/* Clear Prompt Button */
+.clear-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: var(--text-light);
+  font-size: 14px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: all 0.2s ease;
+  z-index: 100;
+}
+
+.clear-btn:hover {
+  background: rgba(0, 0, 0, 0.1);
+  opacity: 1;
+}
+
+#prompt-area.dark-mode .clear-btn {
+  color: var(--text-dark);
+}
+
+#prompt-area.dark-mode .clear-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
