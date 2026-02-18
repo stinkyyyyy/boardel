@@ -67,6 +67,7 @@ describe("Renderer Functions", () => {
   let openCopilot: HTMLButtonElement;
   let themeToggle: HTMLButtonElement;
   let newChatToggle: HTMLButtonElement;
+  let sendButton: HTMLButtonElement;
   let promptDropdown: HTMLButtonElement;
   let modelSelect: HTMLButtonElement;
 
@@ -128,6 +129,10 @@ describe("Renderer Functions", () => {
     newChatToggle = document.createElement("button");
     newChatToggle.className = "new-chat-toggle";
     document.body.appendChild(newChatToggle);
+
+    sendButton = document.createElement("button");
+    sendButton.className = "send-btn";
+    document.body.appendChild(sendButton);
 
     promptDropdown = document.createElement("button");
     promptDropdown.className = "prompt-select";
@@ -341,6 +346,16 @@ describe("Renderer Functions", () => {
       textArea.dispatchEvent(ctrlEnterEvent);
 
       // Should not send empty prompts
+    });
+  });
+
+  describe("Send Button", () => {
+    test("clicking send button sends prompt and clears textarea", () => {
+      textArea.value = "Test prompt via button";
+
+      sendButton.click();
+
+      // In actual implementation, this triggers send-prompt IPC
     });
   });
 

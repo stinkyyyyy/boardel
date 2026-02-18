@@ -94,6 +94,10 @@ const newChatToggleButton = document.querySelector(
   ".new-chat-toggle",
 ) as HTMLButtonElement | null;
 
+const sendButton = document.querySelector(
+  ".send-btn",
+) as HTMLButtonElement | null;
+
 const loopToggleContainer = document.getElementById(
   "loop-mode-container",
 ) as HTMLDivElement | null;
@@ -276,6 +280,24 @@ function updateCharCounter(text: string): void {
 }
 
 if (textArea) {
+  const sendPrompt = () => {
+    const promptText = textArea.value;
+    if (promptText.trim()) {
+      console.log("Sending prompt:", promptText);
+      ipcRenderer.send("send-prompt", promptText);
+      textArea.value = "";
+      updateCharCounter("");
+    }
+  };
+
+  if (sendButton) {
+    sendButton.addEventListener("click", (event: MouseEvent) => {
+      console.log("Send button clicked");
+      event.stopPropagation();
+      sendPrompt();
+    });
+  }
+
   textArea.addEventListener("input", (event: Event) => {
     const value = (event.target as HTMLTextAreaElement).value;
     logToWebPage(value);
@@ -286,13 +308,7 @@ if (textArea) {
     if (event.ctrlKey) {
       if (event.key === "Enter") {
         event.preventDefault();
-        const promptText = textArea.value;
-        if (promptText.trim()) {
-          console.log("Ctrl + Enter pressed, sending prompt:", promptText);
-          ipcRenderer.send("send-prompt", promptText);
-          textArea.value = "";
-          updateCharCounter("");
-        }
+        sendPrompt();
       }
     }
   });
