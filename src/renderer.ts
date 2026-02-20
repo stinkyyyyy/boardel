@@ -80,6 +80,10 @@ const openGeminiButton = document.getElementById(
   "showGemini",
 ) as HTMLButtonElement | null;
 
+const sendButton = document.getElementById(
+  "send-prompt-btn",
+) as HTMLButtonElement | null;
+
 const promptDropdownButton = document.querySelector(
   ".prompt-select",
 ) as HTMLButtonElement | null;
@@ -275,6 +279,28 @@ function updateCharCounter(text: string): void {
   }
 }
 
+export function sendPrompt() {
+  const el =
+    textArea ||
+    (document.getElementById("prompt-input") as HTMLTextAreaElement | null);
+  if (el) {
+    const promptText = el.value;
+    if (promptText.trim()) {
+      console.log("Sending prompt:", promptText);
+      ipcRenderer.send("send-prompt", promptText);
+      el.value = "";
+      updateCharCounter("");
+    }
+  }
+}
+
+if (sendButton) {
+  sendButton.addEventListener("click", (event: MouseEvent) => {
+    event.stopPropagation();
+    sendPrompt();
+  });
+}
+
 if (textArea) {
   textArea.addEventListener("input", (event: Event) => {
     const value = (event.target as HTMLTextAreaElement).value;
@@ -286,13 +312,7 @@ if (textArea) {
     if (event.ctrlKey) {
       if (event.key === "Enter") {
         event.preventDefault();
-        const promptText = textArea.value;
-        if (promptText.trim()) {
-          console.log("Ctrl + Enter pressed, sending prompt:", promptText);
-          ipcRenderer.send("send-prompt", promptText);
-          textArea.value = "";
-          updateCharCounter("");
-        }
+        sendPrompt();
       }
     }
   });
