@@ -51,6 +51,7 @@ import {
   openCopilotMessage,
   closeCopilotMessage,
   logToWebPage,
+  sendPrompt,
 } from "../src/renderer";
 
 const mockIpcRenderer = (global as any).window.electron.ipcRenderer;
@@ -136,6 +137,7 @@ describe("Renderer Functions", () => {
     modelSelect = document.createElement("button");
     modelSelect.className = "model-select";
     document.body.appendChild(modelSelect);
+
   });
 
   afterEach(() => {
@@ -378,6 +380,17 @@ describe("Renderer Functions", () => {
     test("model select button opens model selection window", () => {
       modelSelect.click();
       // Should call ipcRenderer.send("open-model-selection-window")
+    });
+
+    test("sendPrompt sends prompt and clears textarea", () => {
+      textArea.value = "Test prompt via function";
+      sendPrompt();
+
+      expect(mockIpcRenderer.send).toHaveBeenCalledWith(
+        "send-prompt",
+        "Test prompt via function",
+      );
+      expect(textArea.value).toBe("");
     });
   });
 });
